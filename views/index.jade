@@ -1,0 +1,15 @@
+extends layout
+
+block scripts
+   script(src='/socket.io/socket.io.js')
+   script(src='/javascripts/client.socket.io.js')
+
+block content
+
+    ul#messages
+         
+    form(action='')
+      input#m(autocomplete='off')
+      button#bt-send Send
+
+
