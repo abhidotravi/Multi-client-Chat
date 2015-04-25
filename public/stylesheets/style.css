@@ -1,8 +1,31 @@
-body {
-  padding: 50px;
+div.panel-body {
+  padding: 2%;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  border-style: solid;
+  border-width: medium;
+  white-space: pre-wrap;
 }
 
-a {
-  color: #00B7FF;
+#chat_message {
+  padding-top: 3%;
+  padding-bottom: 5%;
 }
+
+#user_div {
+  padding-bottom: 5%;
+}
+
+.message {
+  white-space: pre-wrap;
+}
+
+.max-height {
+  height: 80%
+}
+
+.no-overflow {
+  overflow: hidden;
+}
+
+
+button.btn-style{ width: 10%; background: rgb(130, 224, 255); border: 3; padding: 5px;}

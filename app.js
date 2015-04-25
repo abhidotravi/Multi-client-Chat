@@ -20,21 +20,30 @@ console.log("Socket.io server listening at http://127.0.0.1:"+port);
 //});
 
 var redis = require('redis');
-var client = redis.createClient(); //creates a new client 
+var redis_client = redis.createClient(); //creates a new client 
 
-client.on('connect', function() {
+var client_sockets = {};
+
+redis_client.on('connect', function() {
     console.log('connected');
 });
 
 //create WebSockets - server object and attach to http server
 var sio = require( 'socket.io' ).listen(server);
+
 sio.sockets.on('connection', function(socket){
     console.log('Web client connected');
 
-    socket.on('chat_message', function(data) {
-        console.log(data.chat);
+    socket.on('login_message', function(data) {
         socket.emit('chat-reply',{text: data.chat});
-        client.rpush(['myqueue', data.chat], function(err, reply) {
+        redis_client.rpush(['myqueue', data.chat], function(err, reply) {
+            console.log(reply);
+        });
+    });
+
+    socket.on('chat_message', function(data) {
+        socket.emit('chat_reply',{text: data.chat});
+        redis_client.rpush(['myqueue', data.chat], function(err, reply) {
             console.log(reply);
         });
     });

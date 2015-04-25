@@ -1,15 +1,40 @@
 extends layout
 
+// Define basic data fields using Jade’s mixin features
+// Bind to those data fields for dynamic updates
+
+mixin metric(id,title,footer)
+  div(class="panel panel-default",id="#{id}-metric")
+    if title
+           //div.panel-heading: h1.panel-title= title
+           div(class="panel-heading metric")
+             h3(align = "center", style="color: rgb(60, 224, 255); font-weight: bold")= title
+    div(class="panel-body metric")
+           ul(id="#{id}")= " "
+    if footer
+          div.panel-footer= footer
+
+block styles
+    // link(rel='stylesheet',href='/stylesheets/dashboard.css')
+
 block scripts
    script(src='/socket.io/socket.io.js')
    script(src='/javascripts/client.socket.io.js')
 
 block content
+  div(class="panel-default")
+    div.page-header: h1(align = "center", style="color: rgb(130, 224, 255); font-weight: bold") Web Chat
+    
+    div#user_div(class="container-fluid")
+      input#username(type="text", placeholder="Enter Login Name", style="width:80%; padding: 5px")
+      button#bt-login(class="btn btn-style", type="button", style="position: fixed; right: 30px").
+        Login
 
-    ul#messages
-         
-    form(action='')
-      input#m(autocomplete='off')
-      button#bt-send Send
+    div#chat_window(class="max-height no-overflow")
+      div(class="col-md-12")
+        +metric("messages","Chat Window", " ")
 
-
+    div#chat_message(class = "container-fluid")
+      input#chat(type="text", placeholder="Enter Chat Message", style="width:85%; padding: 5px; position: fixed; bottom: 20px")
+      button#bt-send(class="btn btn-style", type="button", style="position: fixed; right: 40px; bottom: 23px").
+        Send
