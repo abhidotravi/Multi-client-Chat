@@ -22,6 +22,10 @@ console.log("Socket.io server listening at http://127.0.0.1:"+port);
 var redis = require('redis');
 var redis_client = redis.createClient(); //creates a new client 
 
+redis_client.rpush(['myqueue', "Welcome User"], function(err, reply) {
+    console.log(reply);
+});
+
 var client_sockets = {};
 
 redis_client.on('connect', function() {
@@ -35,15 +39,24 @@ sio.sockets.on('connection', function(socket){
     console.log('Web client connected');
 
     socket.on('login_message', function(data) {
-        socket.emit('chat-reply',{text: data.chat});
-        redis_client.rpush(['myqueue', data.chat], function(err, reply) {
-            console.log(reply);
+
+        client_sockets[socket.id] = data.user;
+        console.log("Received: "+socket.id+" -> "+client_sockets[socket.id]);
+
+        redis_client.lrange('myqueue',0,-1,function(err, reply) {
+            reply.forEach(function(item){
+                socket.emit('chat_reply', {text: item});  
+            });
         });
+
     });
 
     socket.on('chat_message', function(data) {
-        socket.emit('chat_reply',{text: data.chat});
-        redis_client.rpush(['myqueue', data.chat], function(err, reply) {
+        var chat = data.chat;
+        var user = client_sockets[socket.id];
+        var userChat = " "+user+": "+chat;
+        sio.sockets.emit('chat_reply', {text: userChat});
+        redis_client.rpush(['myqueue', userChat], function(err, reply) {
             console.log(reply);
         });
     });
