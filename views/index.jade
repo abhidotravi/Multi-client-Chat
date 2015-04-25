@@ -22,18 +22,22 @@ block scripts
    script(src='/javascripts/client.socket.io.js')
 
 block content
+  //Page Heading
   div(class="panel-default")
     div.page-header: h1(align = "center", style="color: rgb(130, 224, 255); font-weight: bold") Web Chat
     
+    //User Login
     div#user_div(class="container-fluid")
       input#username(type="text", placeholder="Enter Login Name", style="width:80%; padding: 5px")
       button#bt-login(class="btn btn-style", type="button", style="position: fixed; right: 30px").
         Login
 
+    //Window to display chat messages
     div#chat_window(class="max-height no-overflow")
       div(class="col-md-12")
         +metric("messages","Chat Window", " ")
 
+    //Chat here
     div#chat_message(class = "container-fluid")
       input#chat(type="text", placeholder="Enter Chat Message", style="width:85%; padding: 5px; position: fixed; bottom: 20px")
       button#bt-send(class="btn btn-style", type="button", style="position: fixed; right: 40px; bottom: 23px").

@@ -15,17 +15,17 @@ var port = 3000;
 server.listen(port);
 console.log("Socket.io server listening at http://127.0.0.1:"+port);
 
-//app.get('/', function(req, res){
-//  res.send('<h1>Hello world</h1>');
-//});
 
 var redis = require('redis');
-var redis_client = redis.createClient(); //creates a new client 
+var redis_client = redis.createClient(); //Create a new Redis Client 
 
+//Create a list and push Welcome User.
+//This will also ensure that a queue exists during login
 redis_client.rpush(['myqueue', "Welcome User"], function(err, reply) {
     console.log(reply);
 });
 
+//Data structure to keep track of users of clients connected
 var client_sockets = {};
 
 redis_client.on('connect', function() {
@@ -35,27 +35,35 @@ redis_client.on('connect', function() {
 //create WebSockets - server object and attach to http server
 var sio = require( 'socket.io' ).listen(server);
 
+//On client connection
 sio.sockets.on('connection', function(socket){
     console.log('Web client connected');
 
+    //On receiving the login information from 
     socket.on('login_message', function(data) {
 
+        //Store user information for that particular client
         client_sockets[socket.id] = data.user;
         console.log("Received: "+socket.id+" -> "+client_sockets[socket.id]);
 
+        //Obtain all the messages stored in redis
+        //Display the conversations that have been  stored so far
         redis_client.lrange('myqueue',0,-1,function(err, reply) {
             reply.forEach(function(item){
-                socket.emit('chat_reply', {text: item});  
+                socket.emit('server_reply', {text: item});  
             });
         });
 
     });
 
+    //On receiving chat message from client, do the following:
+    //Broadcast to all clients and store the message in Redis
     socket.on('chat_message', function(data) {
         var chat = data.chat;
         var user = client_sockets[socket.id];
         var userChat = " "+user+": "+chat;
-        sio.sockets.emit('chat_reply', {text: userChat});
+        sio.sockets.emit('server_reply', {text: userChat});
+
         redis_client.rpush(['myqueue', userChat], function(err, reply) {
             console.log(reply);
         });
