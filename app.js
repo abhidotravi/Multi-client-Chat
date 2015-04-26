@@ -69,9 +69,10 @@ sio.sockets.on('connection', function(socket){
         });
     });
 
-    //Handle Disconnect
+    //Handle Disconnect, delete the entry for the user and socketid
     socket.on('disconnect', function() {
         console.log('Web client disconnected');
+        delete client_sockets[socket.id];
     });
 });
 
