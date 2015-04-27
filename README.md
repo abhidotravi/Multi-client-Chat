@@ -33,3 +33,8 @@ $ sudo npm install
 - Chat away!
 
 
+
+##TODO
+- Chat Rooms
+
+- Personalize for each user

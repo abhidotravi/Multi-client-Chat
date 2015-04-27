@@ -61,7 +61,7 @@ sio.sockets.on('connection', function(socket){
     socket.on('chat_message', function(data) {
         var chat = data.chat;
         var user = client_sockets[socket.id];
-        var userChat = " "+user+": "+chat;
+        var userChat = "<b> "+user+"</b>: "+chat;
         sio.sockets.emit('server_reply', {text: userChat});
 
         redis_client.rpush(['myqueue', userChat], function(err, reply) {
